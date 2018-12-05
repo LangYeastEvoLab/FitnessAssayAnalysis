@@ -5,7 +5,7 @@
 from the R console 
 `library(devtools)`  
 
-`install_github("LangYeastEvoLab/Fitness_Assay_Package")`
+`install_github("LangYeastEvoLab/FitnessAssayAnalysis")`
 
 - devtools is installed on the lab computer, but may need to be installed on your personal computer
 
