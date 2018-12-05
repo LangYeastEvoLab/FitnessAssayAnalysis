@@ -23,6 +23,20 @@ A Well_key and FC_data template can be found as txt files in this repository. We
 
 ### Functions
 
+### Spot_check_data
+
+`output<- Spot_check_data(your well_key, your_flow_data)`  
+- goes through every sample (every well) and determines standard error. 
+- creates two plots in working directory: 
+      - std_error_hisotgram.pdf *histogram of sample standard errors*
+      - raw_data_plots.pdf *plots time course ln(exp/ref) for each well*
+      
+      `Eliminate poor samples? (TRUE/FALSE)` 
+      
+- if `TRUE` the user will be asked to specifiy a standard error cutoff above which samples (wells) will be removed from the dataset. The output return will contain only those wells that pass the cutoff. 
+
+- if `FALSE` function returns the flow_data supplied as an argument unaltered. 
+
 ### Analyze_Fitness_Data
 `output <- Analyze_Fitness_Data(your well_key, your_flow_data)` 
 - cacluates the coefficient of selection of a query strain using time-course compettive growth assay flow cytometry data
