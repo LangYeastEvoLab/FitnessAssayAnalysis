@@ -1,4 +1,4 @@
-get_some_stderror<- function(Well_key, FC_data){
+Spot_check_data<- function(Well_key, FC_data){
 
   remove_samp<- as.logical(readline(prompt="Eliminate poor samples? (TRUE/FALSE): "))
 
