@@ -33,9 +33,9 @@ A Well_key and FC_data template can be found as txt files in this repository. We
       
       `Eliminate poor samples? (TRUE/FALSE)` 
       
-- if `TRUE` the user will be asked to specifiy a standard error cutoff above which samples (wells) will be removed from the dataset. The output return will contain only those wells that pass the cutoff. 
+- If `TRUE` the user will be asked to specifiy a standard error cutoff above which samples (wells) will be removed from the dataset. The output return will contain only those wells that pass the cutoff. The final column in the returned dataframe will be standard error. *Note- if samples are removed from the dataset, the well key must be updated to reflect those by running the `Adjust_well_key(your_well_key, your_reduced_flow_data)` with the output of `Spot_check_data()` as the second argument*
 
-- if `FALSE` function returns the flow_data supplied as an argument unaltered. 
+- If `FALSE` function returns the flow_data supplied as an argument unaltered. The final column in the dataframe will be standard error. 
 
 ### Analyze_Fitness_Data
 `output <- Analyze_Fitness_Data(your well_key, your_flow_data)` 
