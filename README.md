@@ -48,7 +48,7 @@ A Well_key and FC_data template can be found as txt files in this repository. We
 - If `FALSE`, each sample will be treated individually. Coefficient of selection will be found by fitting a linear model for each individual sample. 
 *Replicates MUST be named identically in the well key.*
 
-      `Calculate error? (TRUE/FALSE):` 
+`Calculate error? (TRUE/FALSE):` 
 
 - If you have multiple replicates (`TRUE` for `Group replicates?`), the script will find the standard error of regression and 95% CI by fitting a linear model based on all data points within a replicate. 
 *Replicates MUST be named identically in the well key.*
