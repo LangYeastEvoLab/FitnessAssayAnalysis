@@ -31,7 +31,7 @@ A Well_key and FC_data template can be found as txt files in this repository. We
       - std_error_hisotgram.pdf *histogram of sample standard errors*
       - raw_data_plots.pdf *plots time course ln(exp/ref) for each well*
       
-      `Eliminate poor samples? (TRUE/FALSE)` 
+`Eliminate poor samples? (TRUE/FALSE)` 
       
 - If `TRUE` the user will be asked to specifiy a standard error cutoff above which samples (wells) will be removed from the dataset. The output return will contain only those wells that pass the cutoff. The final column in the returned dataframe will be standard error. *Note- if samples are removed from the dataset, the well key must be updated to reflect those by running the `Adjust_well_key(your_well_key, your_reduced_flow_data)` with the output of `Spot_check_data()` as the second argument*
 
@@ -42,7 +42,7 @@ A Well_key and FC_data template can be found as txt files in this repository. We
 - cacluates the coefficient of selection of a query strain using time-course compettive growth assay flow cytometry data
 - output is a table of selection coefficient, standard error, and 95% CI for each competition or replicate group
 
-      `Group replicates? (TRUE/FALSE):` 
+`Group replicates? (TRUE/FALSE):` 
 
 - The well key supplied will be used to look for any duplicate competitions. If `TRUE`, grouping replicates will treat all competitions with identical strain identifiers as biological replicates (columns 2-4 in the well  key are identical). The coefficient of selection for each replicate group will be found by fitting a linear model based on all data points within a replicate. 
 - If `FALSE`, each sample will be treated individually. Coefficient of selection will be found by fitting a linear model for each individual sample. 
@@ -54,7 +54,7 @@ A Well_key and FC_data template can be found as txt files in this repository. We
 *Replicates MUST be named identically in the well key.*
 - If you do not have replicates of individual competitions (`FALSE` for `Group replicates?`), this method will assign each fitness measurement an error based on the error of regression for each individual sample. 
 
-      `Plot results? (TRUE/FALSE):` 
+`Plot results? (TRUE/FALSE):` 
 
 - For no replicates, each sample will be plotted individually with error bars corresponding to 95% CI. 
 - If you have replicates, each replicate will be plotted as one point with error bars corresponding to 95% CI
