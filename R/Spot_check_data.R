@@ -43,7 +43,7 @@ Spot_check_data<- function(Well_key, FC_data){
     min.y<- -(max.y)
   }
   samples<- seq(from=1, to=length(list_for_plots), by = length(time_points)) #a list to interate by
-  pdf("raw_data_plots.pdf", height = (ncol(FC_data)*7), width = 16)
+  pdf("raw_data_plots.pdf", height = (nrow(FC_data)), width = 16)
   par(mfrow=c(nrow(FC_data)/4, 4)) #control the margins of the plots
   par(mar=c(4,4,4,4))
   for (i in 1:length(samples)) {
