@@ -82,6 +82,8 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
         upper_y<- max(result_df[,3])+ result_df[which.max(result_df[,3]), 5] + .02
         lower_y<-min(result_df[,3]) - result_df[which.min(result_df[,3]), 5] - .02
         if (error_method){
+          result_df$Well.ID<-as.factor(result_df$Well.ID)
+          result_df$Well.ID<-factor(result_df$Well.ID, levels= result_df$Well.ID[order(result_df$Competition)])
           a<- ggplot(result_df, aes(x=Well.ID, y=selection_coefficient))+
             geom_errorbar(aes(ymin=selection_coefficient-CI, ymax=selection_coefficient+CI), width=.1)+
             geom_point(aes(colour=Competition))+
