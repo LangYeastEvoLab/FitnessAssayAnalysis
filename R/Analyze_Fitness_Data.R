@@ -137,7 +137,6 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
         ln_exp_ref_df<- log(exp_df/ref_df)
         colnames(ln_exp_ref_df)<-time_points
         ln_exp_ref_df<-melt(ln_exp_ref_df)
-        ln_exp_ref_df[,1]<-as.numeric(ln_exp_ref_df[,1])
         linmod<-lm(formula= value ~ variable, data=ln_exp_ref_df)
         result_df[groups[j]:end,3]<-signif((as.numeric(coef(linmod)[2])), 4)
         if(error_method){
