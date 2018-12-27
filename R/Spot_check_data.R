@@ -26,6 +26,7 @@ Spot_check_data<- function(Well_key, FC_data){
     refcount<- FC_data[i, seq(3,ncol(FC_data)-1,2)]
     diff<- count-refcount
     natlog<- log(diff/refcount)
+    ln_exp_ref_vector[which(is.infinite(ln_exp_ref_vector))]<-NA
     natlog<-as.numeric(natlog[1,])
     list_for_plots<- append(list_for_plots, natlog) # storing the natlog data for later
     regress<- lm(na.exclude(natlog ~ time_points))
