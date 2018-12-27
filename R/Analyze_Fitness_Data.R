@@ -38,6 +38,7 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
           count_vector<- FC_data[i, (seq(2, ncol(FC_data), 2))]
           ref_vector<- count_vector - exp_vector
           ln_exp_ref_vector<- log(exp_vector/ref_vector)
+          ln_exp_ref_vector[which(is.infinite(ln_exp_ref_vector))]<-NA
           ln_exp_ref_vector<-as.numeric(ln_exp_ref_vector[1,])
           linmod <- lm(na.exclude(ln_exp_ref_vector ~ time_points))
           result_df[i,3]<-signif((as.numeric(coef(linmod)[2])), 4)
@@ -60,6 +61,7 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
           count_vector<- FC_data[i, (seq(2, ncol(FC_data), 2))]
           exp_vector<- count_vector - ref_vector
           ln_exp_ref_vector<- log(exp_vector/ref_vector)
+          ln_exp_ref_vector[which(is.infinite(ln_exp_ref_vector))]<-NA
           ln_exp_ref_vector<-as.numeric(ln_exp_ref_vector[1,])
           linmod <- lm(na.exclude(ln_exp_ref_vector ~ time_points))
           result_df[i,3]<-signif((as.numeric(coef(linmod)[2])), 4)
@@ -135,6 +137,7 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
           exp_df<- count_df - ref_df
         } 
         ln_exp_ref_df<- log(exp_df/ref_df)
+        ln_exp_ref_vector[which(is.infinite(ln_exp_ref_vector))]<-NA
         colnames(ln_exp_ref_df)<-time_points
         ln_exp_ref_df<-melt(ln_exp_ref_df)
         ln_exp_ref_df[,1]<- as.numeric(levels(ln_exp_ref_df[,1]))[ln_exp_ref_df[,1]]
