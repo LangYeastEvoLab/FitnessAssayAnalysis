@@ -1,7 +1,21 @@
 Spot_check_data<- function(Well_key, FC_data){
-
+  
+  #Asks if user wants to remove samples with standard errors higher than a defined threshold
   remove_samp<- as.logical(readline(prompt="Eliminate poor samples? (TRUE/FALSE): "))
-
+  if (remove_samp){
+    print("run adjust_well_key() to update well key for deleted samples")
+    cutoff<-as.numeric(readline(prompt="Insert cutoff threshold: "))
+  }
+  
+  #Asks user if they want to remove natural log values outside a defined range
+  define_limits<- as.logical(readline(prompt="Remove extreneous natural log values? (TRUE/FALSE): "))
+  if (define_limits){
+    prompt <- "enter upper bound, followed by lower bound (+y,-y): "
+    y_limits<-as.integer(strsplit(readline(prompt), ",")[[1]])
+    upper_bound<- y_limits[1] 
+    lower_bound<- y_limits[2] 
+  }
+  
   #Katie added some code to remove mean and SD rows from flowjo data and to ensure that the well key matches the FC data
   if ("Mean" %in% FC_data[,1]){
     FC_data<-FC_data[-(which(FC_data[,1]=="Mean")), ]
@@ -15,7 +29,7 @@ Spot_check_data<- function(Well_key, FC_data){
   
   FC_data$"Std.Error" <- NA #Creates a new column
   c <- ncol(FC_data)
-
+  
   time_points<- (c(0:((ncol(FC_data)-4)/2)))*10 #finds the number of time points in dataset 
   
   #Goes through dataframe and calculates Std. Error for each sample
@@ -23,21 +37,37 @@ Spot_check_data<- function(Well_key, FC_data){
   
   for (i in 1:nrow(FC_data)) {
     count<- FC_data[i, seq(2,ncol(FC_data)-1,2)] #-1 so we don't count Std. Error col
-    refcount<- FC_data[i, seq(3,ncol(FC_data)-1,2)]
-    diff<- count-refcount
+    if (Well_key[i,4]==Well_key[i,2]){ 
+      #if data is gated on experimental strain
+       diff<- FC_data[i, seq(3,ncol(FC_data)-1,2)] #if data gated on experimental then diff will simply be the exp counts
+      refcount<- count-diff 
+    } else { #assumes data gated on reference
+      refcount<- FC_data[i, seq(3,ncol(FC_data)-1,2)]
+      diff<- count-refcount 
+      }
     natlog<- log(diff/refcount)
-    ln_exp_ref_vector[which(is.infinite(ln_exp_ref_vector))]<-NA
+    #finds and removes infinate values (values where either reference or exp count are equal to 0)
+    natlog[which(is.infinite(as.matrix(natlog)))]<-NA
     natlog<-as.numeric(natlog[1,])
-    list_for_plots<- append(list_for_plots, natlog) # storing the natlog data for later
+    
+   if(define_limits){
+      natlog[natlog>upper_bound | natlog<lower_bound] <- NA; #natlog_for_plots ((not sure why this is here?))
+   }
+    
+    #storing natlog values in a vector for later use in plotting 
+    list_for_plots<- append(list_for_plots, natlog_for_plots) # storing the natlog data for later
     regress<- lm(na.exclude(natlog ~ time_points))
-    slope<- as.numeric(coef(regress)[2])
+    #slope<- as.numeric(na.exclude(coef(regress)[2]))
     stderror<- as.numeric(coef(summary(regress))[2,2])
     FC_data[i,c] <- stderror
   }
   
+  # we don't appear to be doing anything with slope. why are we calculating? 
+  
   ## this section plots raw data and stores it to a pdf file in the directory the script is run in
   min.y<- min(na.omit(as.numeric(list_for_plots)))
   max.y<- max(na.omit(as.numeric(list_for_plots)))
+  
   if (abs(min.y)>abs(max.y)){
     max.y<- abs(min.y)
   } else {
@@ -69,16 +99,16 @@ Spot_check_data<- function(Well_key, FC_data){
   }
   good_samples.frame<-na.omit(good_samples.frame)
   if (remove_samp){
-    print("run adjust_well_key() to update well key for deleted samples")
-    cutoff<-as.numeric(readline(prompt="Insert cutoff threshold: "))
-    
     for (i in 1:nrow(FC_data)){
       if(FC_data[i,c] < cutoff){
         good_samples.frame <- rbind(good_samples.frame, FC_data[i, ])
-        }
+      }
     }
     FC_data<- good_samples.frame
   }
+  
+  if(define_limits){
+    print("Standard error estimates based on regressions with user specified outliers removed!")
+  }
   return(FC_data)
 }
-
