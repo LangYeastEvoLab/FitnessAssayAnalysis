@@ -55,7 +55,7 @@ Spot_check_data<- function(Well_key, FC_data){
    }
     
     #storing natlog values in a vector for later use in plotting 
-    list_for_plots<- append(list_for_plots, natlog_for_plots) # storing the natlog data for later
+    list_for_plots<- append(list_for_plots, natlog) # storing the natlog data for later
     regress<- lm(na.exclude(natlog ~ time_points))
     #slope<- as.numeric(na.exclude(coef(regress)[2]))
     stderror<- as.numeric(coef(summary(regress))[2,2])
