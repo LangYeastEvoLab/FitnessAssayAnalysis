@@ -29,16 +29,15 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
     
     time_points<- (c(0:((ncol(FC_data)-3)/2)))*10
     
-    if(!group_replicates){
+    if (!group_replicates) {
       for (i in 1:nrow(FC_data)){
-        ###grouping identical competitions add here 
         if (Well_key[i,4]==Well_key[i,2]){
           #if data is gated on experimental strain
           exp_vector<- FC_data[i, (seq(3, ncol(FC_data), 2))]
           count_vector<- FC_data[i, (seq(2, ncol(FC_data), 2))]
           ref_vector<- count_vector - exp_vector
           ln_exp_ref_vector<- log(exp_vector/ref_vector)
-          ln_exp_ref_vector[which(is.infinite(ln_exp_ref_vector))]<-NA
+          ln_exp_ref_vector[which(is.infinite(as.matrix(ln_exp_ref_vector)))]<-NA
           ln_exp_ref_vector<-as.numeric(ln_exp_ref_vector[1,])
           linmod <- lm(na.exclude(ln_exp_ref_vector ~ time_points))
           result_df[i,3]<-signif((as.numeric(coef(linmod)[2])), 4)
@@ -48,10 +47,10 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
               result_df[i,5]<-NA
             }
             else{
-            result_df[i,4]<-coef(summary(linmod))[2,2]
-            crit_t<- qt(1-.05/2,(length(time_points-2)))
-            result_df[i,5]<- signif(crit_t*result_df[i,4], 4)
-          }
+              result_df[i,4]<-coef(summary(linmod))[2,2]
+              crit_t<- qt(1-.05/2,(length(time_points-2)))
+              result_df[i,5]<- signif(crit_t*result_df[i,4], 4)
+            }
           }
         }
         else { #assumes data is gated on reference
@@ -61,11 +60,11 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
           count_vector<- FC_data[i, (seq(2, ncol(FC_data), 2))]
           exp_vector<- count_vector - ref_vector
           ln_exp_ref_vector<- log(exp_vector/ref_vector)
-          ln_exp_ref_vector[which(is.infinite(ln_exp_ref_vector))]<-NA
+          ln_exp_ref_vector[which(is.infinite(as.matrix(ln_exp_ref_vector)))]<-NA
           ln_exp_ref_vector<-as.numeric(ln_exp_ref_vector[1,])
           linmod <- lm(na.exclude(ln_exp_ref_vector ~ time_points))
           result_df[i,3]<-signif((as.numeric(coef(linmod)[2])), 4)
-        
+          
           if(error_method){
             if (is.na(result_df[i,3])){
               result_df[i,4]<-NA
@@ -84,9 +83,9 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
         upper_y<- max(result_df[,3])+ result_df[which.max(result_df[,3]), 5] + .02
         lower_y<-min(result_df[,3]) - result_df[which.min(result_df[,3]), 5] - .02
         if (error_method){
-          result_df$Well.ID<-as.factor(result_df$Well.ID)
-          result_df$Well.ID<-factor(result_df$Well.ID, levels= result_df$Well.ID[order(result_df$Competition)])
-          a<- ggplot(result_df, aes(x=Well.ID, y=selection_coefficient))+
+          result_df$Well_ID<-as.factor(result_df$Well_ID)
+          result_df$Well_ID<-factor(result_df$Well_ID, levels= result_df$Well_ID[order(result_df$Competition)])
+          a<- ggplot(result_df, aes(x=Well_ID, y=selection_coefficient))+
             geom_errorbar(aes(ymin=selection_coefficient-CI, ymax=selection_coefficient+CI), width=.1)+
             geom_point(aes(colour=Competition))+
             ylim(lower_y, upper_y)+
@@ -96,6 +95,8 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
           print(a)
         }
         else {
+          upper_y<- max(result_df[,3]) + .02
+          lower_y<-min(result_df[,3]) - .02
           a<- ggplot(result_df, aes(x=Competition, y=selection_coefficient))+
             geom_point(aes(colour=Competition))+
             ylim(lower_y, upper_y)+
@@ -126,7 +127,7 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
         } else {
           end<-nrow(FC_data)
         }
-       
+        
         replicate_group<- FC_data[groups[j]:end, 2:ncol(FC_data)]
         count_df<- replicate_group[,(seq(1, ncol(replicate_group), 2))]
         if (Well_key[groups[j],4]==Well_key[groups[j],2]){ #if gated on experimental
@@ -137,11 +138,11 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
           exp_df<- count_df - ref_df
         } 
         ln_exp_ref_df<- log(exp_df/ref_df)
-        ln_exp_ref_vector[which(is.infinite(ln_exp_ref_vector))]<-NA
+        ln_exp_ref_df[which(is.infinite(as.matrix(ln_exp_ref_df)))]<-NA
         colnames(ln_exp_ref_df)<-time_points
-        ln_exp_ref_df<-melt(ln_exp_ref_df)
+        ln_exp_ref_df<-melt(ln_exp_ref_df, variable.name="variable", value.name="value")
         ln_exp_ref_df[,1]<- as.numeric(levels(ln_exp_ref_df[,1]))[ln_exp_ref_df[,1]]
-        linmod<-lm(formula= value ~ variable, data=ln_exp_ref_df)
+        linmod<-lm(formula= value ~ variable, data=ln_exp_ref_df, na.action = na.exclude)
         result_df[groups[j]:end,3]<-signif((as.numeric(coef(linmod)[2])), 4)
         if(error_method){
           result_df[groups[j]:end,4]<-coef(summary(linmod))[2,2]
@@ -154,7 +155,7 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
         library(ggplot2)
         library(ggrepel)
         upper_y<- max(result_df[,3])+ result_df[which.max(result_df[,3]), 5] + .02
-        lower_y<-min(result_df[,3]) - result_df[which.min(result_df[,3]), 5] - .02
+        lower_y<-min(result_df[,3]) - result_df[(which.min(result_df[,3])), 5] - .02
         
         if (error_method){
           a<- ggplot(result_df, aes(Competition, selection_coefficient))+
@@ -168,6 +169,8 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
           print(a) 
         }
         else {
+          upper_y<- max(result_df[,3]) + .02
+          lower_y<-min(result_df[,3]) - .02
           a<- ggplot(result_df, aes(Competition, selection_coefficient))+
             geom_point(aes(col=Competition), size=2)+
             ylim(lower_y, upper_y)+
