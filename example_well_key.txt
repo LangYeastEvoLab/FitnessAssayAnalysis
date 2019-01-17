@@ -1,4 +1,4 @@
-Well ID	Experimental	Reference	Gated.on
+Well_ID	Experimental	Reference	Gated.on
 Specimen_001_A1_A01.fcs	432	519	519
 Specimen_001_A2_A02.fcs	432	519	519
 Specimen_001_A3_A03.fcs	432	519	519
